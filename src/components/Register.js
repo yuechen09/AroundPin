@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
+import { API_ROOT } from '../constants';
 
 const FormItem = Form.Item;
 
@@ -15,7 +16,23 @@ class RegistrationForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                fetch(`${API_ROOT}/signup`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: values.username,
+                        password: values.password,
+                    }),
+                }).then((response) => {
+                    if (response.ok) {
+                        return response;
+                    }
+                    throw new Error(response.statusText);
+                }).then(() => {
+                    message.success('Registration Succeed');
+                }).catch((e) => {
+                    message.error('Registration Failed');
+                    console.log(e);
+                })
             }
         });
     }
@@ -69,10 +86,10 @@ class RegistrationForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={this.handleSubmit}>
+            <Form onSubmit={this.handleSubmit} className="register">
                 <FormItem
                     {...formItemLayout}
-                    label="Username"
+                    label="username"
                 >
                     {getFieldDecorator('username', {
                         rules: [{ required: true, message: 'Please input your username!', whitespace: false }],
