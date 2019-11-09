@@ -19,6 +19,7 @@ class RegistrationForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 fetch(`${API_ROOT}/signup`, {
+                    mode: 'no-cors',
                     method: 'POST',
                     body: JSON.stringify({
                         username: values.username,

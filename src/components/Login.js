@@ -13,6 +13,7 @@ class NormalLoginForm extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 fetch(`${API_ROOT}/login`, {
+                    mode: 'no-cors',
                     method: 'POST',
                     body: JSON.stringify({
                         username: values.username,
