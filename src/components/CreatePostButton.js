@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { Modal, Button } from 'antd';
+import { CreatePostForm } from './CreatePostForm';
 
 export class CreatePostButton extends React.Component {
     state = {
@@ -50,7 +50,7 @@ export class CreatePostButton extends React.Component {
                     confirmLoading={confirmLoading}
                     onCancel={this.handleCancel}
                 >
-                    <p>{ModalText}</p>
+                    <CreatePostForm />
                 </Modal>
             </div>
         );
