@@ -4,6 +4,7 @@ import { Tabs, Button, Spin } from 'antd';
 import { GEO_OPTIONS, POS_KEY, API_ROOT, AUTH_HEADER, TOKEN_KEY } from '../constants';
 import {Gallery} from "./Gallery";
 import { CreatePostButton} from "./CreatePostButton";
+import {AroundMap} from "./AroundMap";
 
 const { TabPane } = Tabs;
 
@@ -36,11 +37,12 @@ export class Home extends React.Component {
     onFailedLoadGeoLocation = () => {
         this.setState({ isLoadingGeoLocation : false, error: 'Failed to load geolocation.' });
     }
-    loadNearbyPosts = () => {
-        const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
+    loadNearbyPosts = (center, radius) => {
+        const { lat, lon } = center || JSON.parse(localStorage.getItem(POS_KEY));
+        const range = radius || 20;
         const token = localStorage.getItem(TOKEN_KEY);
         this.setState({ isLoadingPosts: true});
-        fetch(`${API_ROOT}/search?lat=${lat}&lon=${lon}&range=20000`, {
+        fetch(`${API_ROOT}/search?lat=${lat}&lon=${lon}&range=${range}`, {
             method: 'GET',
             headers: {
                 Authorization: `${AUTH_HEADER} ${token}`,
@@ -95,7 +97,17 @@ export class Home extends React.Component {
                 <TabPane tab="Posts" key="1">
                     {this.getImagePosts()}
                 </TabPane>
-                <TabPane tab="Map" key="2">Content of tab 2</TabPane>
+                <TabPane tab="Map" key="2">
+                   <AroundMap
+                       isMarkerShown
+                       googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3CEh9DXuyjozqptVB5LA-dN7MxWWkr9s"
+                       loadingElement={<div style={{ height: `100%` }} />}
+                       containerElement={<div style={{ height: `800px` }} />}
+                       mapElement={<div style={{ height: `100%` }} />}
+                       posts = {this.state.posts}
+                       loadNearbyPosts={this.loadNearbyPosts}
+                   />
+                </TabPane>
             </Tabs>
         );
     }
