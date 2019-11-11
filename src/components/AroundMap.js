@@ -7,7 +7,10 @@ class NormalAroundMap extends React.Component {
     reloadMarkers = () => {
         const center = this.getCenter();
         const radius = this.getRadius();
-        this.props.loadNearbyPosts(center, radius);
+
+        this.props.updatePosts({
+            center, radius
+        });
     }
 
     getCenter = () => {

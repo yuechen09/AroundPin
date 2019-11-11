@@ -62,7 +62,6 @@ export class Home extends React.Component {
             console.log(e.message);
             this.setState({ isLoadingPosts: false, error: e.message });
         });
-
     }
     getPanelContent = (type) => {
         const { error, isLoadingGeoLocation, isLoadingPosts, posts } = this.state;
@@ -112,12 +111,40 @@ export class Home extends React.Component {
         return (<Gallery images={images}/>);
     }
     onTopicChange = (e) => {
-        console.log(e);
-        this.setState({
-            topic: e.target.value
+        const topic = e.target.value;
+        this.setState({topic});
+        this.updatePosts({topic});
+    }
+    loadFacesAroundTheWorld = (e) => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        this.setState({ isLoadingPosts: true});
+        fetch(`${API_ROOT}/cluster?term=face}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `${AUTH_HEADER} ${token}`,
+            },
+            mode: 'no-cors',
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Failed to load posts.');
+        }).then((data) => {
+            console.log(data);
+            this.setState({ isLoadingPosts: false, posts: data ? data : [] });
+        }).catch((e) => {
+            console.log(e.message);
+            this.setState({ isLoadingPosts: false, error: e.message });
         });
     }
-
+    updatePosts = ({topic, center, radius}) => {
+        topic = topic || this.state.topic;
+        if (topic === 'around') {
+            this.loadNearbyPosts(center, radius);
+        } else {
+            this.loadFacesAroundTheWorld();
+        }
+    }
     render() {
         console.log('state:', this.state);
         const operations = <CreatePostButton loadNearbyPosts={this.loadNearbyPosts}/>;
@@ -143,7 +170,7 @@ export class Home extends React.Component {
                             containerElement={<div style={{ height: `800px` }} />}
                             mapElement={<div style={{ height: `100%` }} />}
                             posts = {this.state.posts}
-                            loadNearbyPosts={this.loadNearbyPosts}
+                            updatePosts={this.updatePosts}
                         />
                     </TabPane>
                 </Tabs>
