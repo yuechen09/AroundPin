@@ -72,7 +72,7 @@ export class CreatePostButton extends React.Component {
         this.form = formInstance;
     }
     render() {
-        const { visible, confirmLoading, ModalText } = this.state;
+        const { visible, confirmLoading } = this.state;
         return (
             <div>
                 <Button type="primary" onClick={this.showModal}>

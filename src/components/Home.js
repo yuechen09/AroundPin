@@ -137,7 +137,7 @@ export class Home extends React.Component {
             this.setState({ isLoadingPosts: false, error: e.message });
         });
     }
-    updatePosts = ({topic, center, radius}) => {
+    updatePosts = ({topic, center, radius}) => {  // object
         topic = topic || this.state.topic;
         if (topic === 'around') {
             this.loadNearbyPosts(center, radius);
@@ -151,7 +151,9 @@ export class Home extends React.Component {
 
         return (
             <div>
-                <RadioGroup onChange={this.onTopicChange} value={this.state.topic}>
+                <RadioGroup onChange={this.onTopicChange} value={this.state.topic}
+                    className="topic-radio-group"
+                >
                     <Radio value="around">Posts Around Me</Radio>
                     <Radio value="face">Faces Around The World</Radio>
                 </RadioGroup>
