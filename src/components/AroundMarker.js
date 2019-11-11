@@ -13,17 +13,19 @@ export class AroundMarker extends React.Component {
     render() {
         const { user, message, url, location, type} = this.props.post;
         const { lat, lon: lng } = location;
+        const isImagePost = type === 'image';
         return (
             <Marker
                 position={{ lat, lng }}
-                onMouseOver={this.toggleOpen}
-                onMouseOut={this.toggleOpen}
+                onMouseOver={isImagePost ? this.toggleOpen : undefined}
+                onMouseOut={isImagePost ? this.toggleOpen : undefined}
+                onClick={!isImagePost ? this.toggleOpen : undefined} // if is video post
             >
                 {this.state.isOpen ? (
                     <InfoWindow onCloseClick={this.toggleOpen}>
                         <div>
                             {
-                                type === "image" ? (
+                                isImagePost ? (
                                     <img
                                         src={url}
                                         alt={message}
@@ -36,7 +38,6 @@ export class AroundMarker extends React.Component {
                                         className="around-marker-video" //css
                                     />
                             }
-
                             <p>{`${user}: ${message}`}</p>
                         </div>
                     </InfoWindow>
