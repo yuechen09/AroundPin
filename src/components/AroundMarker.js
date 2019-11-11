@@ -11,7 +11,7 @@ export class AroundMarker extends React.Component {
     }
 
     render() {
-        const { user, message, url, location } = this.props.post;
+        const { user, message, url, location, type} = this.props.post;
         const { lat, lon: lng } = location;
         return (
             <Marker
@@ -22,7 +22,21 @@ export class AroundMarker extends React.Component {
                 {this.state.isOpen ? (
                     <InfoWindow onCloseClick={this.toggleOpen}>
                         <div>
-                            <img src={url} alt={message} className="around-marker-image"/>
+                            {
+                                type === "image" ? (
+                                    <img
+                                        src={url}
+                                        alt={message}
+                                        className="around-marker-image"
+                                    />
+                                ) :
+                                    <video
+                                        src={url}
+                                        controls
+                                        className="around-marker-video" //css
+                                    />
+                            }
+
                             <p>{`${user}: ${message}`}</p>
                         </div>
                     </InfoWindow>
