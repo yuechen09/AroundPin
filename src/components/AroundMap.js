@@ -25,7 +25,6 @@ class NormalAroundMap extends React.Component {
         }
     }
 
-
     getMapRef = (mapInstance) => {
         this.map = mapInstance;
     }
