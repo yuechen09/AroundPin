@@ -1,62 +1,54 @@
 import React from 'react';
-import {Modal, Button, message} from 'antd';
+import { Modal, Button, message } from 'antd';
 import { CreatePostForm } from './CreatePostForm';
-import {API_ROOT, AUTH_HEADER, POS_KEY, TOKEN_KEY, LOC_SHAKE} from "../constants";
+import { API_ROOT, POS_KEY, TOKEN_KEY, AUTH_HEADER, LOC_SHAKE } from '../constants';
 
 export class CreatePostButton extends React.Component {
     state = {
         ModalText: 'Content of the modal',
         visible: false,
         confirmLoading: false,
-    };
+    }
 
     showModal = () => {
         this.setState({
             visible: true,
         });
-    };
+    }
 
     handleOk = () => {
         this.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form:', values);
-                this.setState({
-                    ModalText: 'The modal will be closed after two seconds',
-                    confirmLoading: true,
-                });
+                console.log(values);
                 const { lat, lon } = JSON.parse(localStorage.getItem(POS_KEY));
                 const token = localStorage.getItem(TOKEN_KEY);
-                let formData = new FormData();
-                // for multiple posts in the same location, create random locations so that they won't overlap
+                const formData = new FormData();
                 formData.set('lat', lat + LOC_SHAKE * Math.random() * 2 - LOC_SHAKE);
                 formData.set('lon', lon + LOC_SHAKE * Math.random() * 2 - LOC_SHAKE);
                 formData.set('message', values.message);
                 formData.set('image', values.image[0].originFileObj);
 
+                this.setState({ confirmLoading: true });
                 fetch(`${API_ROOT}/post`, {
-                    mode: 'no-cors',
                     method: 'POST',
-                    body: formData,// form data
                     headers: {
-                    Authorization: `${AUTH_HEADER} ${token}`,
-                }
+                        Authorization: `${AUTH_HEADER} ${token}`,
+                    },
+                    body: formData,
                 }).then((response) => {
                     if (response.ok) {
-                        this.form.resetFields(); // clear the form
-                        this.setState({
-                            confirmLoading: false,
-                            visible: false
-                        });
+                        this.form.resetFields();
+                        this.setState({ visible: false, confirmLoading: false });
                         return this.props.loadNearbyPosts();
                     }
                     throw new Error(response.statusText);
-                }).then((data) => {
-                        message.success('Post Created Success!')
-                }).catch((e) => {
-                    console.log(e);
-                    this.setState({ confirmLoading: false });
-                    message.error('Failed to Create the Post.');
-                });
+                })
+                    .then(() => message.success('Post created successfully!'))
+                    .catch((e) => {
+                        console.log(e);
+                        this.setState({ confirmLoading: false });
+                        message.error('Failed to create the post.');
+                    });
             }
         });
     }
@@ -66,11 +58,12 @@ export class CreatePostButton extends React.Component {
         this.setState({
             visible: false,
         });
-    };
+    }
 
-    getFormRef = (formInstance) => {
+    saveFormRef = (formInstance) => {
         this.form = formInstance;
     }
+
     render() {
         const { visible, confirmLoading } = this.state;
         return (
@@ -78,15 +71,14 @@ export class CreatePostButton extends React.Component {
                 <Button type="primary" onClick={this.showModal}>
                     Create New Post
                 </Button>
-                <Modal
-                    title="Create New Post"
-                    visible={visible}
-                    onOk={this.handleOk}
-                    okText= "Create"
-                    confirmLoading={confirmLoading}
-                    onCancel={this.handleCancel}
+                <Modal title="Create New Post"
+                       visible={visible}
+                       onOk={this.handleOk}
+                       okText="Create"
+                       confirmLoading={confirmLoading}
+                       onCancel={this.handleCancel}
                 >
-                    <CreatePostForm ref = {this.getFormRef}/>
+                    <CreatePostForm ref={this.saveFormRef}/>
                 </Modal>
             </div>
         );

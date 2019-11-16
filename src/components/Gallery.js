@@ -1,9 +1,8 @@
+import React, { Component }from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import GridGallery from 'react-grid-gallery';
 
-
-export class Gallery extends React.Component {
+export class Gallery extends Component {
     static propTypes = {
         images: PropTypes.arrayOf(
             PropTypes.shape({
@@ -15,12 +14,12 @@ export class Gallery extends React.Component {
                 thumbnailHeight: PropTypes.number.isRequired
             })
         ).isRequired
-    };
+    }
 
     render() {
         const images = this.props.images.map((image) => {
             return {
-                ...image, // copy it and add customOverlay
+                ...image,
                 customOverlay: (
                     <div style={captionStyle}>
                         <div>{`${image.user}: ${image.caption}`}</div>
@@ -30,7 +29,7 @@ export class Gallery extends React.Component {
         });
 
         return (
-            <div style={ wrapperStyle }>
+            <div style={wrapperStyle}>
                 <GridGallery
                     backdropClosesModal
                     images={images}
@@ -39,6 +38,15 @@ export class Gallery extends React.Component {
         );
     }
 }
+
+
+const wrapperStyle = {
+    display: "block",
+    minHeight: "1px",
+    width: "100%",
+    border: "1px solid #ddd",
+    overflow: "auto"
+};
 
 const captionStyle = {
     backgroundColor: "rgba(0, 0, 0, 0.8)",
@@ -50,12 +58,4 @@ const captionStyle = {
     color: "white",
     padding: "2px",
     fontSize: "90%"
-};
-
-const wrapperStyle  = {
-    display: "block",
-    minHeight: "1px",
-    width: "100%",
-    border: "1px solid #ddd",
-    overflow: "auto"
 };

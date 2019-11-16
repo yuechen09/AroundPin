@@ -1,5 +1,9 @@
-import React from 'react'
-import { GoogleMap, withGoogleMap, withScriptjs } from 'react-google-maps';
+import React from 'react';
+import {
+    withScriptjs,
+    withGoogleMap,
+    GoogleMap,
+} from "react-google-maps";
 import { AroundMarker } from './AroundMarker';
 import { POS_KEY } from '../constants';
 
@@ -7,15 +11,16 @@ class NormalAroundMap extends React.Component {
     reloadMarkers = () => {
         const center = this.getCenter();
         const radius = this.getRadius();
-
-        this.props.updatePosts({
-            center, radius
-        });
+        if (this.props.topic === 'around') {
+            this.props.loadNearbyPosts(center, radius);
+        } else {
+            this.props.loadFacesAroundTheWorld();
+        }
     }
 
     getCenter = () => {
         const center = this.map.getCenter();
-        return { lat: center.lat(), lon: center.lng() };
+        return { lat: center.lat(), lon: center.lng() }
     }
 
     getRadius = () => {
@@ -33,8 +38,7 @@ class NormalAroundMap extends React.Component {
     }
 
     render() {
-        const { lat, lon: lng } = JSON.parse(localStorage.getItem(POS_KEY));
-        const { posts } = this.props;
+        const { lat, lon : lng } = JSON.parse(localStorage.getItem(POS_KEY));
         return (
             <GoogleMap
                 ref={this.getMapRef}
@@ -43,11 +47,7 @@ class NormalAroundMap extends React.Component {
                 onDragEnd={this.reloadMarkers}
                 onZoomChanged={this.reloadMarkers}
             >
-                {
-                    posts && posts.length > 0 && posts.map(  // check null
-                        post => <AroundMarker post={post} key={post.url}/>
-                    )
-                }
+                {this.props.posts.map((post) => <AroundMarker post={post} key={post.url}/>)}
             </GoogleMap>
         );
     }
